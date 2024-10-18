@@ -38,10 +38,10 @@ const Videocall = (props: { slug: string; JWT: string }) => {
     await client.current.join(session, jwt, userName, "0000").catch((e) => {
       console.log("***" + JSON.stringify(e) + "***");
     });
-    const timelapseElement = document.createElement("div");
-    const root = createRoot(timelapseElement);
-    root.render(<Timelapse camId={"a"} />);
-    videoContainerRef.current!.appendChild(timelapseElement);
+    // const timelapseElement = document.createElement("div");
+    // const root = createRoot(timelapseElement);
+    // root.render(<Timelapse camId={"a"} />);
+    // videoContainerRef.current!.appendChild(timelapseElement);
     setInSession(true);
     const mediaStream = client.current.getMediaStream();
     // @@ts-expect-error https://stackoverflow.com/questions/7944460/detect-safari-browser/42189492#42189492
@@ -102,8 +102,8 @@ const Videocall = (props: { slug: string; JWT: string }) => {
 
   return (
     <div className="flex h-full w-full flex-1 flex-col">
-      <COI />
-      <h1 className="text-center text-3xl font-bold mb-4 mt-0">
+      <COI className= "bottom-right"/>
+      <h1 className="text-center text-3xl font-bold mb-4 mt-0 top-left">
         Session: {session}
       </h1>
       <div
@@ -113,14 +113,14 @@ const Videocall = (props: { slug: string; JWT: string }) => {
         {/* @ts-expect-error html component */}
         <video-player-container ref={videoContainerRef} style={videoPlayerStyle} />
       </div>
-      {!inSession ? (
+      {/* {!inSession ? (
         <div className="mx-auto flex w-64 flex-col self-center">
           <div className="w-4" />
           <Button className="flex flex-1" onClick={joinSession} title="join session">
             Join
           </Button>
         </div>
-      ) : (
+      ) : ( */}
         <div className="flex w-full flex-col justify-around self-center">
           <div className="mt-4 flex w-[30rem] flex-1 justify-around self-center rounded-md bg-white p-4">
             {/* <CameraButton
@@ -142,7 +142,8 @@ const Videocall = (props: { slug: string; JWT: string }) => {
             </Button>
           </div>
         </div>
-      )}
+      {/* )} */}
+      <Timelapse camId="" />
     </div>
   );
 };
@@ -150,13 +151,14 @@ const Videocall = (props: { slug: string; JWT: string }) => {
 export default Videocall;
 
 const videoPlayerStyle = {
-  height: "75vh",
-  marginTop: "1.5rem",
-  marginLeft: "3rem",
-  marginRight: "3rem",
-  alignContent: "center",
-  borderRadius: "10px",
-  overflow: "hidden",
+  height: "100vh",
+  width: "100vw",
+  marginTop: "0rem",
+  marginLeft: "0rem",
+  marginRight: "0rem",
+  alignContent: "left",
+  borderRadius: "0px",
+  overflow: "scroll",
 } as CSSProperties;
 
 const userName = `User-${new Date().getTime().toString().slice(8)}`;
