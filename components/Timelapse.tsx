@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const Timelapse = (props: { camId: string, speedTimes?: number }) => {
+const Timelapse = (props: { camId: string, speedTimes?: number, hidden?: boolean }) => {
 
     const [currentIntervalId, setCurrentIntervalId] = useState(0);
     const [currentInterval, setCurrentInterval] = useState(0);
@@ -81,22 +81,27 @@ const Timelapse = (props: { camId: string, speedTimes?: number }) => {
     }, [imageFound, requestImageListFailed]);
 
     useEffect(() => {
-        if (currentInterval != interval && images_list.length != 0 && preloadImageAmout >= images_list.length * 0.6) {
+        if (images_list.length != 0 && preloadImageAmout >= images_list.length * 0.6) {
             if (currentIntervalId != 0) {
+                console.log("*********clear interval", currentIntervalId);
                 clearInterval(currentIntervalId);
             }
-            const timeout = setInterval(() => {
-                setCurrentIndex(state => (state + 1) % images_list.length);
-            }, interval);
-            setCurrentIntervalId(timeout[Symbol.toPrimitive]);
-            setCurrentInterval(interval);
+            if (!props.hidden) {
+                console.log("******set interval", interval);
+                const intervalID = setInterval(() => {
+                    setCurrentIndex(state => (state + 1) % images_list.length);
+                }, interval);
+                console.log("******set intervalID", intervalID);
+                setCurrentIntervalId(intervalID as unknown as number); // linanw: if here is a type error, please ignore it, it's not valid.
+                setCurrentInterval(interval);
+            }
         }
-    }, [props.speedTimes, preloadImageAmout]
+    }, [props.speedTimes, preloadImageAmout, props.hidden]
     );
 
     const isImagePreloadEnough = () => (preloadImageAmout >= images_list.length * 0.6);
 
-    return (<div className="container">
+    return (<div className="container" hidden={props.hidden ?? false}>
         <img
             draggable="false"
             onContextMenu={(event) => {
@@ -125,8 +130,8 @@ const Timelapse = (props: { camId: string, speedTimes?: number }) => {
             sizes="100vw"
             alt="Timelapse"
         />
-        <div className="bottom-right"> Image: {imageFound}, Preload: {images_list.length == 0 ? 0 : Math.floor((preloadImageAmout / images_list.length) * 100)}% 
-        Speed: {times}x</div></div>)
+        <div className="bottom-right"> Image: {imageFound}, Preload: {images_list.length == 0 ? 0 : Math.floor((preloadImageAmout / images_list.length) * 100)}%
+            Speed: {times}x</div></div>)
 }
 
 export default Timelapse;
